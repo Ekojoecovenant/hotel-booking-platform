@@ -1,3 +1,4 @@
+import { DomainEvent } from '../../shared/domain/domain-event';
 import { BookingStatus } from './booking-status.enum';
 import {
   InvalidBookingStateError,
@@ -6,6 +7,7 @@ import {
 
 export class Booking {
   private status: BookingStatus;
+  private readonly domainEvents: DomainEvent[] = [];
 
   private constructor(
     private readonly id: string,
@@ -100,5 +102,16 @@ export class Booking {
 
   getTimeRange() {
     return { start: this.startTime, end: this.endTime };
+  }
+
+  // HELPERS
+  protected record(event: DomainEvent): void {
+    this.domainEvents.push(event);
+  }
+
+  public pullDomainEvents(): DomainEvent[] {
+    const events = [...this.domainEvents];
+    this.domainEvents.length = 0;
+    return events;
   }
 }
