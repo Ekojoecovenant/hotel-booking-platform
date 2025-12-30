@@ -4,6 +4,8 @@ import {
   InvalidBookingStateError,
   InvalidBookingTimeError,
 } from './booking.errors';
+import { BookingCancelledEvent } from './events/booking-cancelled.event';
+import { BookingConfirmedEvent } from './events/booking-confirmed.event';
 
 export class Booking {
   private status: BookingStatus;
@@ -52,9 +54,11 @@ export class Booking {
       );
     }
     this.status = BookingStatus.CONFIRMED;
+
+    this.record(new BookingConfirmedEvent(this.id));
   }
 
-  cancel() {
+  cancel(reason: string) {
     if (
       this.status !== BookingStatus.PENDING &&
       this.status !== BookingStatus.CONFIRMED
@@ -64,6 +68,8 @@ export class Booking {
       );
     }
     this.status = BookingStatus.CANCELLED;
+
+    this.record(new BookingCancelledEvent(this.id, reason));
   }
 
   complete(now: Date) {
