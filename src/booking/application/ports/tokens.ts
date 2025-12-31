@@ -1,0 +1,2 @@
+export const BOOKING_REPOSITORY = Symbol('BOOKING_REPOSITORY');
+export const PAYMENT_SERVICE = Symbol('PAYMENT_SERVICE');

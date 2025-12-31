@@ -1,9 +1,11 @@
+import { Inject } from '@nestjs/common';
 import { Booking } from '../../../domain/booking.entity';
 import { BookingPolicyRunner } from '../../../domain/policies/booking-policy-runner';
 import { BookingUnavailablerror } from '../../application-errors';
-import { AvailabilityService } from '../../ports/availability-service.port';
-import { BookingRepository } from '../../ports/booking-repository.port';
+import type { AvailabilityService } from '../../ports/availability-service.port';
+import type { BookingRepository } from '../../ports/booking-repository.port';
 import { CreateBookingDTO } from './create-booking.dto';
+import { BOOKING_REPOSITORY } from '../../ports/tokens';
 
 /**
  * CreateBooking use case is the only safe way the outside world is allowed to create a booking.
@@ -11,6 +13,7 @@ import { CreateBookingDTO } from './create-booking.dto';
 
 export class CreateBookingUseCase {
   constructor(
+    @Inject(BOOKING_REPOSITORY)
     private readonly bookingRepository: BookingRepository,
     private readonly availabilityService: AvailabilityService,
     private readonly policyRunner: BookingPolicyRunner,

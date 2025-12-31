@@ -8,12 +8,17 @@
  * - Availability is restored (indirectly)
  */
 
+import { Inject } from '@nestjs/common';
 import { BookingNotFoundError } from '../../application-errors';
-import { BookingRepository } from '../../ports/booking-repository.port';
+import type { BookingRepository } from '../../ports/booking-repository.port';
 import { CancelBookingDTO } from './cancel-booking.dto';
+import { BOOKING_REPOSITORY } from '../../ports/tokens';
 
 export class CancelBookingUseCase {
-  constructor(private readonly bookingRepository: BookingRepository) {}
+  constructor(
+    @Inject(BOOKING_REPOSITORY)
+    private readonly bookingRepository: BookingRepository,
+  ) {}
 
   async execute(dto: CancelBookingDTO) {
     const booking = await this.bookingRepository.findById(dto.bookingId);

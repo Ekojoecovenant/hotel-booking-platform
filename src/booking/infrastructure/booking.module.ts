@@ -4,10 +4,12 @@ import { PrismaClient } from '@prisma/client/extension';
 import { CreateBookingUseCase } from '../application/use-cases/create-booking/create-booking.usecase';
 import { ConfirmBookingUseCase } from '../application/use-cases/confirm-booking/confirm-booking.usecase';
 import { CancelBookingUseCase } from '../application/use-cases/cancel-booking/cancel-booking.usecase';
-import { BookingRepository } from '../application/ports/booking-repository.port';
 import { PrismaBookingRepository } from './persistence/booking.repository.prisma';
-import { PaymentService } from '../application/ports/payment-service.port';
 import { PaystackPaymentService } from './payments/paystack-payment.service';
+import {
+  BOOKING_REPOSITORY,
+  PAYMENT_SERVICE,
+} from '../application/ports/tokens';
 
 @Module({
   controllers: [BookingController],
@@ -21,18 +23,15 @@ import { PaystackPaymentService } from './payments/paystack-payment.service';
 
     // Repository binding
     {
-      provide: BookingRepository,
+      provide: BOOKING_REPOSITORY,
       useClass: PrismaBookingRepository,
     },
 
     // Payment binding
     {
-      provide: PaymentService,
+      provide: PAYMENT_SERVICE,
       useClass: PaystackPaymentService,
-    }
+    },
   ],
 })
 export class BookingModule {}
-
-git add src/booking/infrastructure/controllers
-git commit -m "feat(infrastructure): add booking HTTP controllers"
