@@ -60,7 +60,7 @@ it('fails if payment does not succeed', async () => {
   });
 
   const repo = new FakeBookingRepository(booking);
-  const payment = new FakePaymentService(true);
+  const payment = new FakePaymentService(false);
 
   const useCase = new ConfirmBookingUseCase(repo as any, payment as any);
 
