@@ -6,6 +6,10 @@ import { BookingRepository } from '../../ports/booking-repository.port';
 import { PaymentService } from '../../ports/payment-service.port';
 import { ConfirmBookingDTO } from './confirm-booking.dto';
 
+/**
+ * ConfirmBooking turns a "promise" into a "commitment" by verifying payment and locking the booking
+ */
+
 export class ConfirmBookingUseCase {
   constructor(
     private readonly bookingRepository: BookingRepository,

@@ -5,6 +5,10 @@ import { AvailabilityService } from '../../ports/availability-service.port';
 import { BookingRepository } from '../../ports/booking-repository.port';
 import { CreateBookingDTO } from './create-booking.dto';
 
+/**
+ * CreateBooking use case is the only safe way the outside world is allowed to create a booking.
+ */
+
 export class CreateBookingUseCase {
   constructor(
     private readonly bookingRepository: BookingRepository,
