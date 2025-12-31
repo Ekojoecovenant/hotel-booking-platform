@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { BookingExceptionFilter } from './booking/infrastructure/filters/booking-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,6 +14,9 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  // Register the filter globally
+  app.useGlobalFilters(new BookingExceptionFilter());
 
   await app.listen(process.env.PORT ?? 3000);
 }

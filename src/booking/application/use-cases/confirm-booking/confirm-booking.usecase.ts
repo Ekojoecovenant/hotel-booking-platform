@@ -1,12 +1,10 @@
 import { Inject } from '@nestjs/common';
-import {
-  BookingNotFoundError,
-  PaymentFailedError,
-} from '../../application-errors';
 import type { BookingRepository } from '../../ports/booking-repository.port';
 import type { PaymentService } from '../../ports/payment-service.port';
 import { ConfirmBookingDTO } from './confirm-booking.dto';
 import { BOOKING_REPOSITORY, PAYMENT_SERVICE } from '../../ports/tokens';
+import { BookingNotFoundError } from '../../errors/booking-not-found.error';
+import { PaymentFailedError } from '../../errors/payment-failed.error';
 
 /**
  * ConfirmBooking turns a "promise" into a "commitment" by verifying payment and locking the booking
@@ -27,7 +25,7 @@ export class ConfirmBookingUseCase {
 
     // Prevents ghost payment
     if (!booking) {
-      throw new BookingNotFoundError('Booking does not exist');
+      throw new BookingNotFoundError(dto.bookingId);
     }
 
     // Reference ties money
@@ -38,7 +36,7 @@ export class ConfirmBookingUseCase {
     });
 
     if (!paymentResult.success) {
-      throw new PaymentFailedError('Payment could not be completed');
+      throw new PaymentFailedError();
     }
 
     // confirm booking

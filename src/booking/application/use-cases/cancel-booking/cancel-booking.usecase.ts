@@ -9,10 +9,10 @@
  */
 
 import { Inject } from '@nestjs/common';
-import { BookingNotFoundError } from '../../application-errors';
 import type { BookingRepository } from '../../ports/booking-repository.port';
 import { CancelBookingDTO } from './cancel-booking.dto';
 import { BOOKING_REPOSITORY } from '../../ports/tokens';
+import { BookingNotFoundError } from '../../errors/booking-not-found.error';
 
 export class CancelBookingUseCase {
   constructor(
