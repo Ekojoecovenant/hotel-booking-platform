@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { DomainEvent } from '../../shared/domain/domain-event';
 import { BookingStatus } from './booking-status.enum';
 import {
@@ -68,16 +70,9 @@ export class Booking {
     status: BookingStatus;
     createdAt: Date;
   }) {
-    const booking = new Booking(
-      props.id,
-      props.resourceId,
-      props.userId,
-      props.startTime,
-      props.endTime,
-      props.status,
-      props.createdAt,
-    );
-    booking.status = props.status; // bypass creation rules, safe because DB record exists
+    const booking = Object.create(Booking.prototype);
+    Object.assign(booking, props);
+    // booking.status = props.status; // bypass creation rules, safe because DB record exists
     return booking;
   }
 
