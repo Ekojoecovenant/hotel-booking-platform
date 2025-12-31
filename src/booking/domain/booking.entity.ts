@@ -59,6 +59,28 @@ export class Booking {
     return booking;
   }
 
+  static rehydrate(props: {
+    id: string;
+    resourceId: string;
+    userId: string;
+    startTime: Date;
+    endTime: Date;
+    status: BookingStatus;
+    createdAt: Date;
+  }) {
+    const booking = new Booking(
+      props.id,
+      props.resourceId,
+      props.userId,
+      props.startTime,
+      props.endTime,
+      props.status,
+      props.createdAt,
+    );
+    booking.status = props.status; // bypass creation rules, safe because DB record exists
+    return booking;
+  }
+
   // BEHAVIOR METHODS
   confirm() {
     if (this.status !== BookingStatus.PENDING) {
@@ -150,5 +172,13 @@ export class Booking {
 
   getCreatedAt() {
     return this.createdAt;
+  }
+
+  getStartTime() {
+    return this.startTime;
+  }
+
+  getEndTime() {
+    return this.endTime;
   }
 }
