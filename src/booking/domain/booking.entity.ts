@@ -6,6 +6,7 @@ import {
 } from './booking.errors';
 import { BookingCancelledEvent } from './events/booking-cancelled.event';
 import { BookingConfirmedEvent } from './events/booking-confirmed.event';
+import { BookingCreatedEvent } from './events/booking-created.event';
 
 export class Booking {
   private status: BookingStatus;
@@ -23,7 +24,7 @@ export class Booking {
     this.status = status;
   }
 
-  // FACTORY
+  // FACTORY METHOD
   static create(props: {
     id: string;
     resourceId: string;
@@ -35,7 +36,7 @@ export class Booking {
       throw new InvalidBookingTimeError('Start time must be before end time');
     }
 
-    return new Booking(
+    const booking = new Booking(
       props.id,
       props.resourceId,
       props.userId,
@@ -44,9 +45,21 @@ export class Booking {
       BookingStatus.PENDING,
       new Date(),
     );
+
+    // Record creation event
+    booking.record(
+      new BookingCreatedEvent(
+        booking.id,
+        booking.resourceId,
+        booking.startTime,
+        booking.endTime,
+      ),
+    );
+
+    return booking;
   }
 
-  // BEHAVIOR
+  // BEHAVIOR METHODS
   confirm() {
     if (this.status !== BookingStatus.PENDING) {
       throw new InvalidBookingStateError(
@@ -55,6 +68,7 @@ export class Booking {
     }
     this.status = BookingStatus.CONFIRMED;
 
+    // Record confirmation event
     this.record(new BookingConfirmedEvent(this.id));
   }
 
@@ -69,6 +83,7 @@ export class Booking {
     }
     this.status = BookingStatus.CANCELLED;
 
+    // Record cancellation event
     this.record(new BookingCancelledEvent(this.id, reason));
   }
 
@@ -101,6 +116,17 @@ export class Booking {
     this.status = BookingStatus.EXPIRED;
   }
 
+  // DOMAIN EVENTS
+  protected record(event: DomainEvent): void {
+    this.domainEvents.push(event);
+  }
+
+  public pullDomainEvents(): DomainEvent[] {
+    const events = [...this.domainEvents];
+    this.domainEvents.length = 0;
+    return events;
+  }
+
   // READ-ONLY GETTERS
   getStatus() {
     return this.status;
@@ -110,14 +136,19 @@ export class Booking {
     return { start: this.startTime, end: this.endTime };
   }
 
-  // HELPERS
-  protected record(event: DomainEvent): void {
-    this.domainEvents.push(event);
+  getId() {
+    return this.id;
   }
 
-  public pullDomainEvents(): DomainEvent[] {
-    const events = [...this.domainEvents];
-    this.domainEvents.length = 0;
-    return events;
+  getResourceId() {
+    return this.resourceId;
+  }
+
+  getUserId() {
+    return this.userId;
+  }
+
+  getCreatedAt() {
+    return this.createdAt;
   }
 }
