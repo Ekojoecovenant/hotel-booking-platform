@@ -27,7 +27,8 @@ export class BookingController {
   // Confirm booking endpoint
   @Post(':id/confirm')
   async confirm(@Param('id') bookingId: string) {
-    return this.confirmBooking.execute({ bookingId });
+    await this.confirmBooking.execute({ bookingId });
+    return { success: true };
   }
 
   // Cancel booking endpoint

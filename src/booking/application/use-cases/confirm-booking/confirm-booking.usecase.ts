@@ -28,6 +28,10 @@ export class ConfirmBookingUseCase {
       throw new BookingNotFoundError(dto.bookingId);
     }
 
+    if (!booking.canBePaid()) {
+      return; // idempotent exit
+    }
+
     // Reference ties money
     const paymentResult = await this.paymentService.charge({
       userId: booking.getUserId(),

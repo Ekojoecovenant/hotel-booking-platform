@@ -78,6 +78,9 @@ export class Booking {
 
   // BEHAVIOR METHODS
   confirm() {
+    if (this.status === BookingStatus.CONFIRMED) {
+      return; // idempotent no-op
+    }
     if (this.status !== BookingStatus.PENDING) {
       throw new InvalidBookingStateError(
         'Only pending bookings can be confirmed',
@@ -90,6 +93,9 @@ export class Booking {
   }
 
   cancel(reason: string) {
+    if (this.status === BookingStatus.CANCELLED) {
+      return; // idempotent no-op
+    }
     if (
       this.status !== BookingStatus.PENDING &&
       this.status !== BookingStatus.CONFIRMED
@@ -175,5 +181,10 @@ export class Booking {
 
   getEndTime() {
     return this.endTime;
+  }
+
+  // Payment guard
+  canBePaid(): boolean {
+    return this.status === BookingStatus.PENDING;
   }
 }
